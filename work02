@@ -1,0 +1,183 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+public class _BinaryTreeNode<T>
+{
+    public T Value { get; set; }
+    public _BinaryTreeNode<T> Left { get; set; }
+    public _BinaryTreeNode<T> Right { get; set; }
+
+    public _BinaryTreeNode(T value)
+    {
+        Value = value;
+        Left = null;
+        Right = null;
+    }
+
+    public class BinaryTree<T> : IEnumerable<T>
+    {
+        private _BinaryTreeNode<T> root;
+
+        public BinaryTree(_BinaryTreeNode<T> rootNode)
+        {
+            root = rootNode;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new InOrderIterator<T>(root);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public IEnumerable<T> InOrderTraversal()
+        {
+            return TraverseInOrder(root);
+        }
+
+        public IEnumerable<T> PreOrderTraversal()
+        {
+            return TraversePreOrder(root);
+        }
+
+        public IEnumerable<T> PostOrderTraversal()
+        {
+            return TraversePostOrder(root);
+        }
+
+        private IEnumerable<T> TraverseInOrder(_BinaryTreeNode<T> node)
+        {
+            if (node != null)
+            {
+                foreach (var item in TraverseInOrder(node.Left))
+                {
+                    yield return item;
+                }
+                yield return node.Value;
+                foreach (var item in TraverseInOrder(node.Right))
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        private IEnumerable<T> TraversePreOrder(_BinaryTreeNode<T> node)
+        {
+            if (node != null)
+            {
+                yield return node.Value;
+                foreach (var item in TraversePreOrder(node.Left))
+                {
+                    yield return item;
+                }
+                foreach (var item in TraversePreOrder(node.Right))
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        private IEnumerable<T> TraversePostOrder(_BinaryTreeNode<T> node)
+        {
+            if (node != null)
+            {
+                foreach (var item in TraversePostOrder(node.Left))
+                {
+                    yield return item;
+                }
+                foreach (var item in TraversePostOrder(node.Right))
+                {
+                    yield return item;
+                }
+                yield return node.Value;
+            }
+        }
+    }
+
+    public class InOrderIterator<T> : IEnumerator<T>
+    {
+        private _BinaryTreeNode<T> current;
+        private Stack<_BinaryTreeNode<T>> stack;
+
+        public InOrderIterator(_BinaryTreeNode<T> root)
+        {
+            current = root;
+            stack = new Stack<_BinaryTreeNode<T>>();
+        }
+
+        public T Current
+        {
+            get { return current.Value; }
+        }
+
+        object IEnumerator.Current => Current;
+
+        public bool MoveNext()
+        {
+            while (current != null || stack.Count > 0)
+            {
+                if (current != null)
+                {
+                    stack.Push(current);
+                    current = current.Left;
+                }
+                else
+                {
+                    current = stack.Pop();
+                    var value = current.Value;
+                    current = current.Right;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+        }
+    }
+
+    class Program
+    {
+        static void Main()
+        {
+            var root = new _BinaryTreeNode<int>(1);
+            root.Left = new _BinaryTreeNode<int>(2);
+            root.Right = new _BinaryTreeNode<int>(3);
+            root.Left.Left = new _BinaryTreeNode<int>(4);
+            root.Left.Right = new _BinaryTreeNode<int>(5);
+
+            var tree = new BinaryTree<int>(root);
+
+            Console.WriteLine("Прямой обход:");
+            foreach (var node in tree.InOrderTraversal())
+            {
+                Console.Write(node + " ");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("Обратный обход:");
+            foreach (var node in tree.PreOrderTraversal())
+            {
+                Console.Write(node + " ");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("Обратный обход:");
+            foreach (var node in tree.PostOrderTraversal())
+            {
+                Console.Write(node + " ");
+            }
+            Console.WriteLine();
+        }
+    }
+}
