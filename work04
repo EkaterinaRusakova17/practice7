@@ -2,13 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class _BinaryTreeNode<T>
+public class BinaryTreeNode<T>
 {
     public T Value { get; set; }
-    public _BinaryTreeNode<T> Left { get; set; }
-    public _BinaryTreeNode<T> Right { get; set; }
+    public BinaryTreeNode<T> Left { get; set; }
+    public BinaryTreeNode<T> Right { get; set; }
 
-    public _BinaryTreeNode(T value)
+    public BinaryTreeNode(T value)
     {
         Value = value;
         Left = null;
@@ -17,16 +17,16 @@ public class _BinaryTreeNode<T>
 
     public class BinaryTree<T> : IEnumerable<T>
     {
-        private _BinaryTreeNode<T> root;
+        private BinaryTreeNode<T> _root;
 
-        public BinaryTree(_BinaryTreeNode<T> rootNode)
+        public BinaryTree(BinaryTreeNode<T> rootNode)
         {
-            root = rootNode;
+            _root = rootNode;
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            return new InOrderIterator<T>(root);
+            return new InOrderIterator<T>(_root);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -36,20 +36,20 @@ public class _BinaryTreeNode<T>
 
         public IEnumerable<T> InOrderTraversal()
         {
-            return TraverseInOrder(root);
+            return TraverseInOrder(_root);
         }
 
         public IEnumerable<T> PreOrderTraversal()
         {
-            return TraversePreOrder(root);
+            return _TraversePreOrder(_root);
         }
 
         public IEnumerable<T> PostOrderTraversal()
         {
-            return TraversePostOrder(root);
+            return _TraversePostOrder(_root);
         }
 
-        private IEnumerable<T> TraverseInOrder(_BinaryTreeNode<T> node)
+        private IEnumerable<T> TraverseInOrder(BinaryTreeNode<T> node)
         {
             if (node != null)
             {
@@ -65,31 +65,31 @@ public class _BinaryTreeNode<T>
             }
         }
 
-        private IEnumerable<T> TraversePreOrder(_BinaryTreeNode<T> node)
+        private IEnumerable<T> _TraversePreOrder(BinaryTreeNode<T> node)
         {
             if (node != null)
             {
                 yield return node.Value;
-                foreach (var item in TraversePreOrder(node.Left))
+                foreach (var item in _TraversePreOrder(node.Left))
                 {
                     yield return item;
                 }
-                foreach (var item in TraversePreOrder(node.Right))
+                foreach (var item in _TraversePreOrder(node.Right))
                 {
                     yield return item;
                 }
             }
         }
 
-        private IEnumerable<T> TraversePostOrder(_BinaryTreeNode<T> node)
+        private IEnumerable<T> _TraversePostOrder(BinaryTreeNode<T> node)
         {
             if (node != null)
             {
-                foreach (var item in TraversePostOrder(node.Left))
+                foreach (var item in _TraversePostOrder(node.Left))
                 {
                     yield return item;
                 }
-                foreach (var item in TraversePostOrder(node.Right))
+                foreach (var item in _TraversePostOrder(node.Right))
                 {
                     yield return item;
                 }
@@ -100,36 +100,36 @@ public class _BinaryTreeNode<T>
 
     public class InOrderIterator<T> : IEnumerator<T>
     {
-        private _BinaryTreeNode<T> current;
-        private Stack<_BinaryTreeNode<T>> stack;
+        private BinaryTreeNode<T> _current;
+        private Stack<BinaryTreeNode<T>> _stack;
 
-        public InOrderIterator(_BinaryTreeNode<T> root)
+        public InOrderIterator(BinaryTreeNode<T> root)
         {
-            current = root;
-            stack = new Stack<_BinaryTreeNode<T>>();
+            _current = root;
+            _stack = new Stack<BinaryTreeNode<T>>();
         }
 
         public T Current
         {
-            get { return current.Value; }
+            get { return _current.Value; }
         }
 
         object IEnumerator.Current => Current;
 
         public bool MoveNext()
         {
-            while (current != null || stack.Count > 0)
+            while (_current != null || _stack.Count > 0)
             {
-                if (current != null)
+                if (_current != null)
                 {
-                    stack.Push(current);
-                    current = current.Left;
+                    _stack.Push(_current);
+                    _current = _current.Left;
                 }
                 else
                 {
-                    current = stack.Pop();
-                    var value = current.Value;
-                    current = current.Right;
+                    _current = _stack.Pop();
+                    var value = _current.Value;
+                    _current = _current.Right;
                     return true;
                 }
             }
@@ -150,11 +150,11 @@ public class _BinaryTreeNode<T>
     {
         static void Main()
         {
-            var root = new _BinaryTreeNode<int>(1);
-            root.Left = new _BinaryTreeNode<int>(2);
-            root.Right = new _BinaryTreeNode<int>(3);
-            root.Left.Left = new _BinaryTreeNode<int>(4);
-            root.Left.Right = new _BinaryTreeNode<int>(5);
+            var root = new BinaryTreeNode<int>(1);
+            root.Left = new BinaryTreeNode<int>(2);
+            root.Right = new BinaryTreeNode<int>(3);
+            root.Left.Left = new BinaryTreeNode<int>(4);
+            root.Left.Right = new BinaryTreeNode<int>(5);
 
             var tree = new BinaryTree<int>(root);
 
